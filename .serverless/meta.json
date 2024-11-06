@@ -1,0 +1,537 @@
+{
+  "/Users/jshprzmba/Project Files/OwnedProjects/data-fetcher": {
+    "versionSfCore": null,
+    "versionFramework": "4.4.7",
+    "isWithinCompose": false,
+    "isCompose": false,
+    "composeOrgName": null,
+    "composeResolverProviders": {
+      "default-aws-credential-resolver": "<REDACTED>"
+    },
+    "composeServiceName": null,
+    "servicePath": "/Users/jshprzmba/Project Files/OwnedProjects/data-fetcher",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "service": "data-fetcher",
+      "plugins": [
+        "serverless-offline"
+      ],
+      "provider": {
+        "name": "aws",
+        "runtime": "nodejs20.x",
+        "stage": "dev",
+        "region": "ap-southeast-1",
+        "versionFunctions": true,
+        "compiledCloudFormationTemplate": {
+          "AWSTemplateFormatVersion": "2010-09-09",
+          "Description": "The AWS CloudFormation template for this Serverless application",
+          "Resources": {
+            "MainLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/data-fetcher-dev-main"
+              }
+            },
+            "IamRoleLambdaExecution": {
+              "Type": "AWS::IAM::Role",
+              "Properties": {
+                "AssumeRolePolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Principal": {
+                        "Service": [
+                          "lambda.amazonaws.com"
+                        ]
+                      },
+                      "Action": [
+                        "sts:AssumeRole"
+                      ]
+                    }
+                  ]
+                },
+                "Policies": [
+                  {
+                    "PolicyName": {
+                      "Fn::Join": [
+                        "-",
+                        [
+                          "data-fetcher",
+                          "dev",
+                          "lambda"
+                        ]
+                      ]
+                    },
+                    "PolicyDocument": {
+                      "Version": "2012-10-17",
+                      "Statement": [
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "logs:CreateLogStream",
+                            "logs:CreateLogGroup",
+                            "logs:TagResource"
+                          ],
+                          "Resource": [
+                            {
+                              "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/data-fetcher-dev*:*"
+                            }
+                          ]
+                        },
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "logs:PutLogEvents"
+                          ],
+                          "Resource": [
+                            {
+                              "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/data-fetcher-dev*:*:*"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "Path": "/",
+                "RoleName": {
+                  "Fn::Join": [
+                    "-",
+                    [
+                      "data-fetcher",
+                      "dev",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      "lambdaRole"
+                    ]
+                  ]
+                }
+              }
+            },
+            "MainLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-ap-southeast-1-7de80669-5f32",
+                  "S3Key": "serverless/data-fetcher/dev/1730859153169-2024-11-06T02:12:33.169Z/data-fetcher.zip"
+                },
+                "Handler": "dist/serverless.handler",
+                "Runtime": "nodejs20.x",
+                "FunctionName": "data-fetcher-dev-main",
+                "MemorySize": 1024,
+                "Timeout": 6,
+                "Role": {
+                  "Fn::GetAtt": [
+                    "IamRoleLambdaExecution",
+                    "Arn"
+                  ]
+                }
+              },
+              "DependsOn": [
+                "MainLogGroup"
+              ]
+            },
+            "MainLambdaVersion0eS3NcqkDWQBOR5W7vOSB5vg6W1uJyrn6FNo3mYz5k": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "MainLambdaFunction"
+                },
+                "CodeSha256": "Hw5Z+gatupLUGDycGw1i+79uYKC6jpzzaKcRp5YpKok="
+              }
+            },
+            "ApiGatewayRestApi": {
+              "Type": "AWS::ApiGateway::RestApi",
+              "Properties": {
+                "Name": "dev-data-fetcher",
+                "EndpointConfiguration": {
+                  "Types": [
+                    "EDGE"
+                  ]
+                },
+                "Policy": ""
+              }
+            },
+            "ApiGatewayResourceProxyVar": {
+              "Type": "AWS::ApiGateway::Resource",
+              "Properties": {
+                "ParentId": {
+                  "Fn::GetAtt": [
+                    "ApiGatewayRestApi",
+                    "RootResourceId"
+                  ]
+                },
+                "PathPart": "{proxy+}",
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                }
+              }
+            },
+            "ApiGatewayResourceApi": {
+              "Type": "AWS::ApiGateway::Resource",
+              "Properties": {
+                "ParentId": {
+                  "Fn::GetAtt": [
+                    "ApiGatewayRestApi",
+                    "RootResourceId"
+                  ]
+                },
+                "PathPart": "api",
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                }
+              }
+            },
+            "ApiGatewayMethodAny": {
+              "Type": "AWS::ApiGateway::Method",
+              "Properties": {
+                "HttpMethod": "ANY",
+                "RequestParameters": {},
+                "ResourceId": {
+                  "Fn::GetAtt": [
+                    "ApiGatewayRestApi",
+                    "RootResourceId"
+                  ]
+                },
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                "ApiKeyRequired": "<REDACTED>",
+                "AuthorizationType": "NONE",
+                "Integration": {
+                  "IntegrationHttpMethod": "POST",
+                  "Type": "AWS_PROXY",
+                  "Uri": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition"
+                        },
+                        ":apigateway:",
+                        {
+                          "Ref": "AWS::Region"
+                        },
+                        ":lambda:path/2015-03-31/functions/",
+                        {
+                          "Fn::GetAtt": [
+                            "MainLambdaFunction",
+                            "Arn"
+                          ]
+                        },
+                        "/invocations"
+                      ]
+                    ]
+                  }
+                },
+                "MethodResponses": []
+              },
+              "DependsOn": [
+                "MainLambdaPermissionApiGateway"
+              ]
+            },
+            "ApiGatewayMethodProxyVarAny": {
+              "Type": "AWS::ApiGateway::Method",
+              "Properties": {
+                "HttpMethod": "ANY",
+                "RequestParameters": {},
+                "ResourceId": {
+                  "Ref": "ApiGatewayResourceProxyVar"
+                },
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                "ApiKeyRequired": "<REDACTED>",
+                "AuthorizationType": "NONE",
+                "Integration": {
+                  "IntegrationHttpMethod": "POST",
+                  "Type": "AWS_PROXY",
+                  "Uri": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition"
+                        },
+                        ":apigateway:",
+                        {
+                          "Ref": "AWS::Region"
+                        },
+                        ":lambda:path/2015-03-31/functions/",
+                        {
+                          "Fn::GetAtt": [
+                            "MainLambdaFunction",
+                            "Arn"
+                          ]
+                        },
+                        "/invocations"
+                      ]
+                    ]
+                  }
+                },
+                "MethodResponses": []
+              },
+              "DependsOn": [
+                "MainLambdaPermissionApiGateway"
+              ]
+            },
+            "ApiGatewayMethodApiGet": {
+              "Type": "AWS::ApiGateway::Method",
+              "Properties": {
+                "HttpMethod": "GET",
+                "RequestParameters": {},
+                "ResourceId": {
+                  "Ref": "ApiGatewayResourceApi"
+                },
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                "ApiKeyRequired": "<REDACTED>",
+                "AuthorizationType": "NONE",
+                "Integration": {
+                  "IntegrationHttpMethod": "POST",
+                  "Type": "AWS_PROXY",
+                  "Uri": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition"
+                        },
+                        ":apigateway:",
+                        {
+                          "Ref": "AWS::Region"
+                        },
+                        ":lambda:path/2015-03-31/functions/",
+                        {
+                          "Fn::GetAtt": [
+                            "MainLambdaFunction",
+                            "Arn"
+                          ]
+                        },
+                        "/invocations"
+                      ]
+                    ]
+                  }
+                },
+                "MethodResponses": []
+              },
+              "DependsOn": [
+                "MainLambdaPermissionApiGateway"
+              ]
+            },
+            "ApiGatewayDeployment1730859149937": {
+              "Type": "AWS::ApiGateway::Deployment",
+              "Properties": {
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                "StageName": "dev"
+              },
+              "DependsOn": [
+                "ApiGatewayMethodAny",
+                "ApiGatewayMethodProxyVarAny",
+                "ApiGatewayMethodApiGet"
+              ]
+            },
+            "MainLambdaPermissionApiGateway": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "MainLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":execute-api:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":",
+                      {
+                        "Ref": "ApiGatewayRestApi"
+                      },
+                      "/*/*"
+                    ]
+                  ]
+                }
+              }
+            }
+          },
+          "Outputs": {
+            "ServerlessDeploymentBucketName": {
+              "Value": "serverless-framework-deployments-ap-southeast-1-7de80669-5f32",
+              "Export": {
+                "Name": "sls-data-fetcher-dev-ServerlessDeploymentBucketName"
+              }
+            },
+            "MainLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "MainLambdaVersion0eS3NcqkDWQBOR5W7vOSB5vg6W1uJyrn6FNo3mYz5k"
+              },
+              "Export": {
+                "Name": "sls-data-fetcher-dev-MainLambdaFunctionQualifiedArn"
+              }
+            },
+            "ServiceEndpoint": {
+              "Description": "URL of the service endpoint",
+              "Value": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "https://",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    ".execute-api.",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ".",
+                    {
+                      "Ref": "AWS::URLSuffix"
+                    },
+                    "/dev"
+                  ]
+                ]
+              },
+              "Export": {
+                "Name": "sls-data-fetcher-dev-ServiceEndpoint"
+              }
+            }
+          }
+        },
+        "vpc": {}
+      },
+      "package": {
+        "exclude": [
+          "node_modules/**",
+          "test/**",
+          "docs/**",
+          "*.md"
+        ],
+        "artifactsS3KeyDirname": "serverless/data-fetcher/dev/code-artifacts",
+        "deploymentBucket": "serverless-framework-deployments-ap-southeast-1-7de80669-5f32",
+        "artifact": "/Users/jshprzmba/Project Files/OwnedProjects/data-fetcher/.serverless/data-fetcher.zip",
+        "artifactDirectoryName": "serverless/data-fetcher/dev/1730859153169-2024-11-06T02:12:33.169Z"
+      },
+      "functions": {
+        "main": {
+          "handler": "dist/serverless.handler",
+          "events": [
+            {
+              "http": {
+                "method": "any",
+                "path": "",
+                "integration": "AWS_PROXY"
+              }
+            },
+            {
+              "http": {
+                "method": "any",
+                "path": "{proxy+}",
+                "integration": "AWS_PROXY"
+              }
+            },
+            {
+              "http": {
+                "method": "get",
+                "path": "api",
+                "integration": "AWS_PROXY"
+              }
+            }
+          ],
+          "name": "data-fetcher-dev-main",
+          "package": {},
+          "memory": 1024,
+          "timeout": 6,
+          "runtime": "nodejs20.x",
+          "vpc": {},
+          "versionLogicalId": "MainLambdaVersion0eS3NcqkDWQBOR5W7vOSB5vg6W1uJyrn6FNo3mYz5k"
+        }
+      }
+    },
+    "serviceRawFile": "service: data-fetcher\n\nplugins:\n  - serverless-offline\n\nprovider:\n  name: aws\n  runtime: nodejs20.x\n\npackage:\n  exclude:\n    - node_modules/**\n    - test/**\n    - docs/**\n    - '*.md'\n\nfunctions:\n  main:\n    handler: dist/serverless.handler\n    events:\n      - http:\n          method: ANY\n          path: /\n      - http:\n          method: ANY\n          path: '{proxy+}'\n      - http:\n          method: GET\n          path: /api     # Swagger path for local testing\n",
+    "command": [
+      "deploy"
+    ],
+    "options": {
+      "stage": "dev",
+      "region": "ap-southeast-1",
+      "aws-profile": "bp-dev"
+    },
+    "error": null,
+    "params": {},
+    "machineId": "d1070d7a225dc3325ca3345b628411ec",
+    "stage": "dev",
+    "accessKeyV2": "<REDACTED>",
+    "accessKeyV1": "<REDACTED>",
+    "orgId": "5bdaff3e-5daa-4531-b729-429608cbe77f",
+    "orgName": "jshprz",
+    "userId": "CR8Jqq2wYlj3dkNwk4",
+    "dashboard": {
+      "isEnabledForService": false,
+      "requiredAuthentication": false,
+      "orgFeaturesInUse": null,
+      "orgObservabilityIntegrations": null,
+      "serviceAppId": null,
+      "serviceProvider": null,
+      "instanceParameters": null
+    },
+    "userName": "jshprz",
+    "subscription": null,
+    "userEmail": "joshuaperezmelgazo@gmail.com",
+    "serviceProviderAwsRegion": "ap-southeast-1",
+    "serviceProviderAwsCredentials": "<REDACTED>",
+    "serviceProviderAwsAccountId": "613678687562",
+    "projectType": "traditional",
+    "versionSf": "4.4.7",
+    "serviceProviderAwsCfStackName": "data-fetcher-dev",
+    "integrations": {},
+    "serviceUniqueId": "arn:aws:cloudformation:ap-southeast-1:613678687562:stack/data-fetcher-dev/259a22a0-9be1-11ef-a814-06730133f629",
+    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:ap-southeast-1:613678687562:stack/data-fetcher-dev/259a22a0-9be1-11ef-a814-06730133f629",
+    "serviceProviderAwsCfStackCreated": "2024-11-06T01:47:58.056Z",
+    "serviceProviderAwsCfStackUpdated": "2024-11-06T02:12:40.199Z",
+    "serviceProviderAwsCfStackStatus": "UPDATE_COMPLETE",
+    "serviceProviderAwsCfStackOutputs": [
+      {
+        "OutputKey": "MainLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:ap-southeast-1:613678687562:function:data-fetcher-dev-main:2",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-data-fetcher-dev-MainLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "ServiceEndpoint",
+        "OutputValue": "https://nxg1lijuud.execute-api.ap-southeast-1.amazonaws.com/dev",
+        "Description": "URL of the service endpoint",
+        "ExportName": "sls-data-fetcher-dev-ServiceEndpoint"
+      },
+      {
+        "OutputKey": "ServerlessDeploymentBucketName",
+        "OutputValue": "serverless-framework-deployments-ap-southeast-1-7de80669-5f32",
+        "ExportName": "sls-data-fetcher-dev-ServerlessDeploymentBucketName"
+      }
+    ]
+  }
+}

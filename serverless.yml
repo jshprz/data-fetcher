@@ -1,0 +1,29 @@
+service: data-fetcher
+
+plugins:
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+
+package:
+  exclude:
+    - node_modules/**
+    - test/**
+    - docs/**
+    - '*.md'
+
+functions:
+  main:
+    handler: dist/serverless.handler
+    events:
+      - http:
+          method: ANY
+          path: /
+      - http:
+          method: ANY
+          path: '{proxy+}'
+      - http:
+          method: GET
+          path: /api     # Swagger path for local testing
