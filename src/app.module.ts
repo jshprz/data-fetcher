@@ -8,13 +8,13 @@ import { ShopifyStoreThemeCustomContent } from './entities/shopify-store-theme-c
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'the-test-db.cyfmba7wz4ia.ap-southeast-2.rds.amazonaws.com',
+      host: 'the-test-db.c3caug6qsry2.ap-southeast-1.rds.amazonaws.com',
       port: 5432,
       username: 'dev',
       password: 'convU3-nuhpob-xiwjez',
       database: 'dev_db',
-      entities: [ShopifyStoreThemeCustomContent], // Ensure the entity is listed here
-      synchronize: true,  // Only use in development
+      entities: [ShopifyStoreThemeCustomContent],
+      synchronize: false,
       ssl: true,
       extra: {
         ssl: {

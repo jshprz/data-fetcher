@@ -1,9 +1,9 @@
-import { Entity, Column, CreateDateColumn, UpdateDateColumn, Unique, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, CreateDateColumn, UpdateDateColumn, Unique, PrimaryGeneratedColumn, PrimaryColumn } from 'typeorm';
 
 @Entity('shopify_store_theme_custom_content')
 @Unique(['key'])
 export class ShopifyStoreThemeCustomContent {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn('text')
   id: string;
 
   @Column('text')
